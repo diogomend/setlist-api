@@ -18,7 +18,8 @@ export class SetlistService {
                     setlist.id,
                     setlist.eventDate,
                     setlist.artist,
-                    setlist.venue
+                    setlist.venue,
+                    setlist.sets
                 );
             })
             result = [...result, ...setlistsCollection];
