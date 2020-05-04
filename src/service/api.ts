@@ -8,6 +8,10 @@ class Api {
     async get(url, headers): Promise<any> {
         return await this.httpService.get(url, {headers}).toPromise();
     }
+
+    async getBuffer(url, headers): Promise<any> {
+        return await this.httpService.get(url, {...headers, responseType: 'arraybuffer'}).toPromise();
+    }
 }
 
 const instance = new Api();
