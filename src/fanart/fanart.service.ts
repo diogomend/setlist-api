@@ -5,7 +5,7 @@ import { Readable } from 'stream';
 @Injectable()
 export class FanartService {
   constructor(private readonly config: ConfigService, private readonly repo: FanartRepository) {}
-  async getImage(mbid) {
+  async getImage(mbid, preview) {
       try {
         const { data } = await this.repo.getArtistMedia(mbid);
         const imageURL = this.getImageURL(data);
@@ -13,7 +13,11 @@ export class FanartService {
         if (!imageURL) {
           throw new HttpException("media_not_found", 404);
         }
-        const url = imageURL.replace(/^https?\:\/\//i, "http://").replace(/\/fanart\//gm, "/preview/");
+        let url = imageURL.replace(/^https?\:\/\//i, "http://");
+        if (preview) {
+          url = url.replace(/\/fanart\//gm, "/preview/");
+        }
+        console.log(url);
         return await this.repo.getImageFromURL(url);
       } catch (err) {
         throw new HttpException("media_not_found", 404);

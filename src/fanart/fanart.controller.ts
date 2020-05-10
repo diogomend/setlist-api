@@ -1,7 +1,5 @@
-import { Controller, Get, Param, Header, UseInterceptors, CacheInterceptor, Res, HttpService } from '@nestjs/common';
+import { Controller, Get, Param, Header, UseInterceptors, CacheInterceptor, Res, Query } from '@nestjs/common';
 import { FanartService } from './fanart.service';
-import { Response } from 'express';
-const fs = require('fs');
 
 @Controller('fanart')
 @UseInterceptors(CacheInterceptor)
@@ -9,11 +7,28 @@ export class FanartController {
   constructor(private readonly fanartService: FanartService) {}
 
   @Get(':mbid')
-  async getImage(@Res() res, @Param() params) {
-        const { data } = await this.fanartService.getImage(params.mbid);
-        const buffer = Buffer.from(data);
+  async getImage(@Res() res, @Param() params, @Query() query) {
+        const preview = query.preview || false;
+        const filename = params.mbid.substring(0, params.mbid.lastIndexOf('.')) || params.mbid;
+
+        const { data } = await this.fanartService.getImage(filename, preview);
+        
         res.set({'Content-Type': 'image/png'});   
-        res.set("Cache-Control", "public,max-age=31536000,immutable");
+        var expDate = new Date(Date.now()+1000*3600*24*365).toUTCString();
+        var newHeaders =
+        [
+          {"Access-Control-Allow-Origin": "*"},
+          {"Cache-Control": "public, max-age=0"},
+          {"Expires": expDate},
+          {"Pragma": "cache"},
+          {"Etag": filename},
+        ];
+
+        newHeaders.forEach((header) => {
+          res.set(header);
+        });
+
+        const buffer = Buffer.from(data);
         res.end(buffer);
   }
 }
