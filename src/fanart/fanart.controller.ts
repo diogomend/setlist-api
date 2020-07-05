@@ -15,11 +15,13 @@ export class FanartController {
         
         res.set({'Content-Type': 'image/png'});   
         var expDate = new Date(Date.now()+1000*3600*24*365).toUTCString();
+        var lastModified = 'Tue, 07 May 2019 08:43:41 GMT';
         var newHeaders =
         [
           {"Access-Control-Allow-Origin": "*"},
           {"Cache-Control": "public, max-age=0"},
           {"Expires": expDate},
+          {"Last-modified": lastModified},
           {"Pragma": "cache"},
           {"Etag": filename},
         ];

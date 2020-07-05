@@ -5,11 +5,9 @@ export class ConfigService {
   private readonly envConfig: Record<string, string>;
 
   constructor(filePath: string) {
-    if (process.env.NODE_ENV !== 'production') {
-      this.envConfig = dotenv.parse(fs.readFileSync(filePath))
-    } else {
-      this.envConfig = process.env;
-    }
+    this.envConfig = process.env.NODE_ENV !== 'production' ?
+      dotenv.parse(fs.readFileSync(filePath)) :
+      process.env;
   }
 
   get(key: string): string {

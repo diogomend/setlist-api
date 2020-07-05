@@ -33,5 +33,11 @@ describe('Setlist Controller', () => {
 
       expect(setlistController.findAll(1)).toBe('MOCK_RESULT');
     });
+
+    it('Expect skip response if query has warmer', () => {
+      jest.spyOn(setlistService, 'findAll').mockImplementation(() => 'MOCK_RESULT');
+
+      expect(setlistController.findAll(1, {warmer: true})).toBe('Cache updated');
+    });
   });
 });
